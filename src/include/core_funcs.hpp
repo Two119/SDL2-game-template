@@ -303,8 +303,6 @@ class Sprite{
         //cout << outline_rects.size() << endl;
     }  
     void update(){ 
-        update_physics();
-        update_animation();
         image.blit(position);
         for (int l = 0; l<outline_rects.size(); l=l+1){
             SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -312,112 +310,41 @@ class Sprite{
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         }
     }
-    void update_physics();
-    void update_animation();
+    
 };
 class AnimatedSprite{
     public:
-    vector<vector<SDL_Rect>> outline_rects;
+    vector<Sprite> frames;
     Surf_Spritesheet image;
-    Spritesheet image_;
-    Uint32 colkey;
     int position[2];
-    vector<vector<vector<int>>> outline;
-    double scal;
-    SDL_Rect dstrect;
-    int loc[2] = {0, 0};
+    int frame[2] = {0, 0};
+    int delay = 0;
+    int length;
+    Uint32 colkey;
     void init(SDL_Surface *img, int pos[2], int size_[2], int spacing=1,double scale = 1, SDL_Color colorkey = {255, 255, 255}){
-        scal = scale;
         colkey = (255<<24) + (int(colorkey.b)<<16) + (int(colorkey.g)<<8) + int(colorkey.r);
-        image.init(scale_surface(img, scale), size_, colkey, spacing*scale);
-        image_.init(scale_surface(img, scale), size_, colkey, spacing*scale);
-        bool on_border = false;
-        SDL_Rect rec;
-        rec.w = scale;
-        rec.h = scale;
-        
-        for (int x_ = 0; x_<size_[0]-1; x_=x_+1){
-            loc[0] = x_;
-            for (int j=0; j<image.get(loc)->h; j=j+1){
-                for(int i=0; i<image.get(loc)->w; i=i+1){
-                    on_border = false;
-                    if (!(get_at(image.get(loc), i, j).r==colorkey.r && get_at(image.get(loc), i, j).g==colorkey.g && get_at(image.get(loc), i, j).b==colorkey.b)){
-                        if (i-1>=0){
-                            if (get_at(image.get(loc), i-1, j).r==colorkey.r && get_at(image.get(loc), i-1, j).g==colorkey.g && get_at(image.get(loc), i-1, j).b==colorkey.b){
-                                on_border = true;
-                            }
-                        }
-                        else{
-                            if (!(get_at(image.get(loc), i, j).r==colorkey.r && get_at(image.get(loc), i, j).g==colorkey.g && get_at(image.get(loc), i, j).b==colorkey.b)){
-                                on_border = true;
-                            }
-                        }
-                        if (j-1>=0){
-                            if (get_at(image.get(loc), i, j-1).r==colorkey.r && get_at(image.get(loc), i, j-1).g==colorkey.g && get_at(image.get(loc), i, j-1).b==colorkey.b){
-                                on_border = true;
-                            }
-                        }
-                        else{
-                            if (!(get_at(image.get(loc), i, j).r==colorkey.r && get_at(image.get(loc), i, j).g==colorkey.g && get_at(image.get(loc), i, j).b==colorkey.b)){
-                                on_border = true;
-                            }
-                        }
-                        if (i+1<image.get(loc)->w){
-                            if (get_at(image.get(loc), i+1, j).r==colorkey.r && get_at(image.get(loc), i+1, j).g==colorkey.g && get_at(image.get(loc), i+1, j).b==colorkey.b){
-                                on_border = true;
-                            }
-                        }
-                        else{
-                            if (!(get_at(image.get(loc), i, j).r==colorkey.r && get_at(image.get(loc), i, j).g==colorkey.g && get_at(image.get(loc), i, j).b==colorkey.b)){
-                                on_border = true;
-                            }
-                        }
-                        if (j+1<image.get(loc)->h){
-                            if (get_at(image.get(loc), i, j+1).r==colorkey.r && get_at(image.get(loc), i, j+1).g==colorkey.g && get_at(image.get(loc), i, j+1).b==colorkey.b){
-                                on_border = true;
-                            }
-                        }
-                        else{
-                            if (!(get_at(image.get(loc), i, j).r==colorkey.r && get_at(image.get(loc), i, j).g==colorkey.g && get_at(image.get(loc), i, j).b==colorkey.b)){
-                                on_border = true;
-                            }
-                        }
-                    }
-                    if (on_border){
-                        vector<int> pos = {i, j};
-                        outline[loc[0]].push_back(pos);
-                    }
-                }
+        image.init(img, size_, colkey, spacing);
+        for (int i = 0; i < size_[0]; i=i+1){
+            Sprite sprite;
+            frame[0] = i;
+            sprite.init(image.get(frame), pos, scale, colorkey);
+            frames.push_back(sprite);
+        }    
+        length = size_[0]-1;
+    } 
+    void update(){ 
+        delay += 1;
+        if (delay%8==0){
+            frame[0]+=1;
+            if (frame[0]>length){
+                frame[0]=0;
             }
         }
-        position[0] = pos[0];
-        position[1] = pos[1];
-        for (int l = 0; l<outline[loc[0]].size(); l=l+1){
-            rec.x = pos[0]+outline[loc[0]][l][0]*scale;
-            rec.y = pos[1]+outline[loc[0]][l][1]*scale;
-            outline_rects[loc[0]].push_back(rec);
-        }
-        loc[0] = 0;
-        //cout << outline_rects.size() << endl;
-    }  
-    void update(){ 
-        update_physics();
-        update_animation();
-        dstrect.x = position[0];
-        dstrect.y = position[1];
-        dstrect.w = image_.size[0];
-        dstrect.h = image_.size[1];
-        SDL_RenderCopy(renderer, image_.get(loc), NULL, &dstrect);
-        for (int l = 0; l<outline_rects[loc[0]].size(); l=l+1){
-            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-            SDL_RenderFillRect(renderer, &outline_rects[loc[0]][l]);
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        }
+        frames[frame[0]].update();
     }
-    void update_physics();
-    void update_animation();
+    
 };
-Sprite playersprite;
+AnimatedSprite playersprite;
 template < typename ret, typename T, typename... Rest > using fn = std::function< ret(T, Rest...) >;
 template < typename ret, typename T, typename... Rest > ret wrapper(fn< ret, T, Rest... > f, T t, Rest... rest)
 {

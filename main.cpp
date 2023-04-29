@@ -12,6 +12,7 @@ int main( int argc, char* args[] ) {
                 playing = false;
             }
         }
+        //playersprite.update();
         cursor_img.blit(mouse_pos);
         SDL_RenderPresent(renderer);
         frametime = SDL_GetTicks()-framestart;
