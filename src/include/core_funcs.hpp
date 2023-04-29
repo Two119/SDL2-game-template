@@ -112,6 +112,12 @@ Image rotate_image(Image img, double angle){
     new_img.init(rotozoomSurface(img.tex_surf, angle, 1.00, SMOOTHING_OFF));
     return new_img;
 }
+void SDL_RenderOnTexture(SDL_Texture *src, SDL_Texture *dst, SDL_Rect dstrect, SDL_Rect srcrect){
+    SDL_SetRenderTarget(renderer, dst);
+    SDL_SetTextureBlendMode(dst, SDL_BLENDMODE_BLEND);
+    SDL_RenderCopy(renderer, src, &srcrect, &dstrect);
+    SDL_SetRenderTarget(renderer, NULL);
+}
 class Spritesheet{
     public:
     int size[2] = {0, 0};

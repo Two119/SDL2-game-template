@@ -12,7 +12,7 @@ int main( int argc, char* args[] ) {
                 playing = false;
             }
         }
-        //cursor_img.blit(mouse_pos);
+        cursor_img.blit(mouse_pos);
         SDL_RenderPresent(renderer);
         frametime = SDL_GetTicks()-framestart;
         if (framedelay > frametime){
