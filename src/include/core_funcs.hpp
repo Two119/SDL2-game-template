@@ -321,7 +321,8 @@ class AnimatedSprite{
     int delay = 0;
     int length;
     Uint32 colkey;
-    void init(SDL_Surface *img, int pos[2], int size_[2], int spacing=1,double scale = 1, SDL_Color colorkey = {255, 255, 255}){
+    int framechange;
+    void init(SDL_Surface *img, int pos[2], int size_[2], int spacing=1,double scale = 1, SDL_Color colorkey = {255, 255, 255}, int framechange_=8){
         colkey = (255<<24) + (int(colorkey.b)<<16) + (int(colorkey.g)<<8) + int(colorkey.r);
         image.init(img, size_, colkey, spacing);
         for (int i = 0; i < size_[0]; i=i+1){
@@ -331,10 +332,11 @@ class AnimatedSprite{
             frames.push_back(sprite);
         }    
         length = size_[0]-1;
+        framechange = framechange_;
     } 
     void update(){ 
         delay += 1;
-        if (delay%8==0){
+        if (delay%framechange==0){
             frame[0]+=1;
             if (frame[0]>length){
                 frame[0]=0;
