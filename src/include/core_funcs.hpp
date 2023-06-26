@@ -370,7 +370,7 @@ class SpriteStack{
         dstrect.x = layers[0]->w;
         dstrect.y = layers[0]->h;
     }
-    void render(SDL_Point p, double angle=90){
+    void render(SDL_Point p, double angle=0, double scale=1){
         dstrect.x = p.x;
         dstrect.y = p.y;
         SDL_SetRenderTarget(renderer, dst_tex);
@@ -391,8 +391,8 @@ class SpriteStack{
         SDL_SetRenderTarget(renderer, NULL);
         dstrect.x = p.x;
         dstrect.y = p.y;
-        dstrect.w = layers[0]->w*8;
-        dstrect.h = layers[0]->h*8;
+        dstrect.w = layers[0]->w*scale;
+        dstrect.h = layers[0]->h*scale;
         cout << dstrect.w << ", " << getsize(tex).y << endl;
         SDL_RenderCopyF(renderer, dst_tex, NULL, &dstrect);
     }
