@@ -347,6 +347,56 @@ class AnimatedSprite{
     
 };
 AnimatedSprite playersprite;
+class SpriteStack{
+    public:
+    vector<SDL_Surface*> layers;
+    float spread = 0;
+    SDL_FRect dstrect;
+    SDL_Surface *surf;
+    SDL_FPoint dst;
+    SDL_Texture *tex;
+    SDL_Texture *dst_tex;
+    void init(SDL_Surface *stack, int size[2], float spread_ = 1){
+        spread = spread_;
+        Surf_Spritesheet s;
+        SDL_SetColorKey(stack, SDL_TRUE, white);
+        s.init(stack, size);
+        for(int i =0; i< s.sheet.size(); i++){
+            layers.push_back(s.sheet[s.sheet.size()-1-i][0]);
+        }
+        dst_tex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, layers[0]->w*2+60, layers[0]->h*2+60);
+        dstrect.w = layers[0]->w*2;
+        dstrect.h = layers[0]->h*2;
+        dstrect.x = layers[0]->w;
+        dstrect.y = layers[0]->h;
+    }
+    void render(SDL_Point p, double angle=90){
+        dstrect.x = p.x;
+        dstrect.y = p.y;
+        SDL_SetRenderTarget(renderer, dst_tex);
+        SDL_RenderClear(renderer);
+        for (int i = 0; i < layers.size(); i++){
+            SDL_FreeSurface(surf);
+            surf = rotate_surface(layers[i], angle);
+            SDL_SetColorKey(surf, SDL_TRUE, black);
+            dstrect.x = (float)layers[0]->w-surf->w/2;
+            dstrect.y = (float)layers[0]->h-surf->h/2+80-(i*spread);
+            dstrect.w = surf->w;
+            dstrect.h = surf->h;
+            SDL_DestroyTexture(tex);
+            tex = SDL_CreateTextureFromSurface(renderer, surf);
+            SDL_RenderCopyF(renderer, tex, NULL, &dstrect);
+            
+        }
+        SDL_SetRenderTarget(renderer, NULL);
+        dstrect.x = p.x;
+        dstrect.y = p.y;
+        dstrect.w = layers[0]->w*8;
+        dstrect.h = layers[0]->h*8;
+        cout << dstrect.w << ", " << getsize(tex).y << endl;
+        SDL_RenderCopyF(renderer, dst_tex, NULL, &dstrect);
+    }
+};
 template < typename ret, typename T, typename... Rest > using fn = std::function< ret(T, Rest...) >;
 template < typename ret, typename T, typename... Rest > ret wrapper(fn< ret, T, Rest... > f, T t, Rest... rest)
 {
