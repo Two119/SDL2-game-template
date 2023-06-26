@@ -19,7 +19,7 @@ Important information about the classes:
 
 - Also, the AnimatedSprite class takes an optional framechange_ argument. This represents the number of frames the program waits before moving on from one frame to the next. By default, this value is set at 8.
 
-- The two spritesheet classes and also the AnimatedSprite class take in a size argument. This represents the number of rows and columns of frames in a spritesheet. So for example for this image:
+- The two spritesheet classes, the SpriteStack class and also the AnimatedSprite class take in a size argument. This represents the number of rows and columns of frames in a spritesheet. So for example for this image:
 ![image](https://user-images.githubusercontent.com/99664810/235335349-07f310d3-5f31-4038-ba25-1bc1a0f9940d.png) which is a spritesheet for a button, the size would be [2, 1] since there are 2 columns and 1 row.
 
 - The AnimatedSprite class as of currently can only use spritesheets with a single row. This may be improved in the future depending on my requirements for my own games.
