@@ -10,8 +10,8 @@ A template for an SDL2 game made using C++. Use this as a sort of blank slate wi
 7) AnimatedSprite class (splits a SDL_Surface spritesheet into various SDL_Texture s and assigns each one to a Sprite object, then updates them one by one to play the animation with rects stored for pixel perfect collision.)
 8) Button class (a clickable button capable of taking a function as an argument and executing it when clicked. Also comes with a sound effect)
 9) Slider class (a draggable ui slider that can be operated with both keyboard and mouse)
-10) fn<> (allows you to store a function as a variable. meant to be used to pass a function as an argument to a button).
-
+10) fn<> (allows you to store a function as a variable. meant to be used to pass a function as an argument to a button)
+11) SpriteStack class (allows you to render sprite-stacks WARNING: This only works if your sprite sheet containing all the sprite-stack layers has all its layers vertically aligned one on top of the other. Horizontal alignment won't work).
 Important information about the classes: 
 
 - The sprite class requires an SDL_Surface at its original size to be passed in, and the scale you want the image to be can be put in as an argument. By default the Sprite::update method will also render the outline rects. This is a debugging feature and you can remove the for loop at the end of Sprite::update if you just want the image to render. 
