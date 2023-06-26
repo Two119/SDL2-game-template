@@ -11,7 +11,7 @@ A template for an SDL2 game made using C++. Use this as a sort of blank slate wi
 8) Button class (a clickable button capable of taking a function as an argument and executing it when clicked. Also comes with a sound effect)
 9) Slider class (a draggable ui slider that can be operated with both keyboard and mouse)
 10) fn<> (allows you to store a function as a variable. meant to be used to pass a function as an argument to a button)
-11) SpriteStack class (allows you to render sprite-stacks WARNING: This only works if your sprite sheet containing all the sprite-stack layers has all its layers vertically aligned one on top of the other. Horizontal alignment won't work).
+11) SpriteStack class (allows you to render sprite-stacks).
     
 Important information about the classes: 
 
@@ -32,6 +32,8 @@ int test(const char* c, bool to_print){
 }
 ```
 You have to pass in the return type, then the various types of the arguments like this: ```auto test_func = fn<int, const char*, bool>(test);```
+
+- To use the SpriteStack class, you have to first create a SpriteStack object, then initialize it by passing in the sprite sheet containing your sprite-stack layers, the size (number of rows and columns) of your spritesheet (as explained in the above note about spritesheets) and the spread value of your sprite-stack. Simply load the spritesheet as a surface and then pass it in as an argument; don't pass it in as a ```Surf_Spritesheet``` or ```Spritesheet``` object. WARNING: This class only works if your sprite sheet containing all the sprite-stack layers has all its sprites vertically one on top of the other. Horizontal spritesheet alignment won't work.
 
 # Functions
 1) scale_surface (scales a surface up or down)
