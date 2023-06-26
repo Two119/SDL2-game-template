@@ -1,4 +1,4 @@
-# Cpp-template
+# SDL2-game-template
 A template for an SDL2 game made using C++. Use this as a sort of blank slate with all the basic classes, functions and necessary variables you need to create your own games.
 # Classes
 1) Image class (handles texture rendering for you)
