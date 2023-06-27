@@ -356,6 +356,8 @@ class SpriteStack{
     SDL_FPoint dst;
     SDL_Texture *tex;
     SDL_Texture *dst_tex;
+    SDL_Point tex_size;
+    vector<SDL_Texture*> tex_cache;
     void init(SDL_Surface *stack, int size[2], float spread_ = 1){
         spread = spread_;
         Surf_Spritesheet s;
@@ -365,36 +367,41 @@ class SpriteStack{
             layers.push_back(s.sheet[s.sheet.size()-1-i][0]);
         }
         dst_tex = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, layers[0]->w*2+60, layers[0]->h*2+60);
+        tex_size = getsize(dst_tex);
         dstrect.w = layers[0]->w*2;
         dstrect.h = layers[0]->h*2;
         dstrect.x = layers[0]->w;
         dstrect.y = layers[0]->h;
-    }
-    void render(SDL_Point p, double angle=0, double scale=1){
-        dstrect.x = p.x;
-        dstrect.y = p.y;
-        SDL_SetRenderTarget(renderer, dst_tex);
-        SDL_RenderClear(renderer);
-        for (int i = 0; i < layers.size(); i++){
-            SDL_FreeSurface(surf);
-            surf = rotate_surface(layers[i], angle);
-            SDL_SetColorKey(surf, SDL_TRUE, black);
-            dstrect.x = (float)layers[0]->w-surf->w/2;
-            dstrect.y = (float)layers[0]->h-surf->h/2+80-(i*spread);
-            dstrect.w = surf->w;
-            dstrect.h = surf->h;
-            SDL_DestroyTexture(tex);
-            tex = SDL_CreateTextureFromSurface(renderer, surf);
-            SDL_RenderCopyF(renderer, tex, NULL, &dstrect);
+        for (int ang = 0; ang < 361; ang++){
+            
+            tex_cache.push_back(SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, layers[0]->w*2+60, layers[0]->h*2+60));
+            SDL_SetRenderTarget(renderer, tex_cache[ang]);
+            SDL_RenderClear(renderer);
+            for (int i = 0; i < layers.size(); i++){
+                SDL_FreeSurface(surf);
+                surf = rotate_surface(layers[i], ang);
+                SDL_SetColorKey(surf, SDL_TRUE, black);
+                dstrect.x = (float)tex_size.x/2-surf->w/2;
+                dstrect.y = (float)tex_size.y/2-surf->h/2-(i*spread);
+                dstrect.w = surf->w;
+                dstrect.h = surf->h;
+                SDL_DestroyTexture(tex);
+                tex = SDL_CreateTextureFromSurface(renderer, surf);
+                SDL_RenderCopyF(renderer, tex, NULL, &dstrect);
+                
+            }
+            SDL_SetRenderTarget(renderer, NULL);
             
         }
-        SDL_SetRenderTarget(renderer, NULL);
+    }
+    void render(SDL_Point p, int angle=0, double scale=1){
         dstrect.x = p.x;
         dstrect.y = p.y;
         dstrect.w = layers[0]->w*scale;
         dstrect.h = layers[0]->h*scale;
-        cout << dstrect.w << ", " << getsize(tex).y << endl;
-        SDL_RenderCopyF(renderer, dst_tex, NULL, &dstrect);
+        if (angle<0) SDL_RenderCopyF(renderer, tex_cache[360+angle%360], NULL, &dstrect);
+        if (angle>360) SDL_RenderCopyF(renderer, tex_cache[angle%360], NULL, &dstrect);
+        if (angle>=0 && angle<=360) SDL_RenderCopyF(renderer, tex_cache[angle], NULL, &dstrect);
     }
 };
 template < typename ret, typename T, typename... Rest > using fn = std::function< ret(T, Rest...) >;
