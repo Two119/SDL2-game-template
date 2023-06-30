@@ -375,6 +375,7 @@ class SpriteStack{
         for (int ang = 0; ang < 361; ang++){
             
             tex_cache.push_back(SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, layers[0]->w*2+60, layers[0]->h*2+60));
+            SDL_SetTextureBlendMode(tex_cache[ang], SDL_BLENDMODE_BLEND);
             SDL_SetRenderTarget(renderer, tex_cache[ang]);
             SDL_RenderClear(renderer);
             for (int i = 0; i < layers.size(); i++){
