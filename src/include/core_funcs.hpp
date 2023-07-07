@@ -9,7 +9,7 @@
 #include <cmath>
 #include <vector>
 #include <functional>
-#include <SDL2_rotozoom.c>
+#include <SDL2/SDL2_rotozoom.c>
 using namespace std;
 using Random = effolkronium::random_static;
 int mouse_pos[2];
